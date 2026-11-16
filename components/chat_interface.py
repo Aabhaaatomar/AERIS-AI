@@ -1,8 +1,10 @@
 """
 AERIS AI - Chat Interface Component (Polished UI & Responsive Bubbles)
+Uses native Streamlit chat components for guaranteed Markdown formatting and zero raw HTML leaks.
 """
 import streamlit as st
 import time
+import textwrap
 import config
 from utils.helpers import get_active_api_key
 
@@ -21,7 +23,7 @@ def render_chat_interface():
     
     # Active engine status
     provider = st.session_state.get("llm_provider", "gemini")
-    model = st.session_state.get("llm_model", "gemini-1.5-flash")
+    model = st.session_state.get("llm_model", "gemini-2.0-flash")
     api_key = get_active_api_key(provider)
     is_demo = st.session_state.get("demo_mode", False) or not bool(api_key)
     
@@ -29,7 +31,7 @@ def render_chat_interface():
     if len(st.session_state.messages) > 0:
         col_hdr, col_btn = st.columns([0.80, 0.20])
         with col_hdr:
-            st.markdown("""
+            header_html = textwrap.dedent("""
             <div style="margin-bottom: 0.25rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 1.5rem;">💬</span>
@@ -41,7 +43,8 @@ def render_chat_interface():
                     Real-time reasoning, multi-service atmospheric queries, and health recommendations.
                 </p>
             </div>
-            """, unsafe_allow_html=True)
+            """).strip()
+            st.html(header_html)
         with col_btn:
             st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
             if st.button("🗑️ Clear Chat", use_container_width=True, type="secondary"):
@@ -49,7 +52,7 @@ def render_chat_interface():
                 st.session_state.quick_prompt = None
                 st.rerun()
     else:
-        st.markdown("""
+        header_html = textwrap.dedent("""
         <div style="margin-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span style="font-size: 1.5rem;">💬</span>
@@ -61,11 +64,12 @@ def render_chat_interface():
                 Real-time reasoning, multi-service atmospheric queries, and health recommendations.
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(header_html)
 
     # Informative Banner for Current Engine Status
     if is_demo and len(st.session_state.messages) == 0:
-        st.markdown("""
+        status_banner_html = textwrap.dedent("""
         <div style="
             background: rgba(34, 211, 238, 0.08);
             border: 1px solid rgba(34, 211, 238, 0.25);
@@ -74,20 +78,17 @@ def render_chat_interface():
             margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 0.5rem;
         ">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1rem;">💡</span>
-                <span style="font-size: 0.82rem; color: #94A3B8;">
-                    Running in <strong>Demo Simulator Mode</strong>. To activate live LLM generation, enter your Gemini API key in the sidebar under <strong>⚙️ AI Engine Settings</strong>.
-                </span>
-            </div>
+            <span style="font-size: 1rem;">💡</span>
+            <span style="font-size: 0.82rem; color: #94A3B8;">
+                Running in <strong>Demo Simulator Mode</strong>. To activate live LLM generation, enter your Gemini API key in the sidebar under <strong>⚙️ AI Engine Settings</strong>.
+            </span>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(status_banner_html)
     elif not is_demo and len(st.session_state.messages) == 0:
-        st.markdown(f"""
+        status_banner_html = textwrap.dedent(f"""
         <div style="
             background: rgba(16, 185, 129, 0.08);
             border: 1px solid rgba(16, 185, 129, 0.25);
@@ -103,11 +104,12 @@ def render_chat_interface():
                 Genuine LLM Active: Connected to {provider.title()} ({model}) with live telemetry context injection.
             </span>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(status_banner_html)
 
     # Welcome Card if conversation is empty
     if len(st.session_state.messages) == 0:
-        st.markdown(f"""
+        welcome_html = textwrap.dedent("""
         <div class="chat-welcome-container">
             <div style="
                 width: 52px;
@@ -143,14 +145,11 @@ def render_chat_interface():
                 <span style="background: #141E27; border: 1px solid #293946; color: #EAB308; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 20px;">🛡️ Health Advisories</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(welcome_html)
 
         # Suggested Questions (Visually Attractive & Responsive)
-        st.markdown("""
-        <div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem;">
-            💡 Suggested Prompts
-        </div>
-        """, unsafe_allow_html=True)
+        st.caption("💡 SUGGESTED QUESTIONS")
 
         cols = st.columns(2)
         question_icons = ["🌫️", "🛡️", "⚖️", "🔬", "📉", "🧠", "🩺"]
@@ -162,44 +161,17 @@ def render_chat_interface():
                     st.session_state.quick_prompt = q
                     st.rerun()
 
-    # Render Chat History
+    # Render Chat History using native Streamlit chat messages for bulletproof markdown parsing
     for msg in st.session_state.messages:
         role = msg["role"]
         content = msg["content"]
         
         if role == "user":
-            st.markdown(f"""
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 0.85rem; width: 100%;">
-                <div class="chat-bubble-user">
-                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; margin-bottom: 0.3rem;">
-                        <span style="font-size: 0.7rem; color: #22D3EE; font-weight: 700; letter-spacing: 0.05em;">YOU</span>
-                        <span style="font-size: 0.8rem;">👤</span>
-                    </div>
-                    <div>{content}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            with st.chat_message("user", avatar="👤"):
+                st.markdown(content)
         else:
-            st.markdown(f"""
-            <div style="display: flex; justify-content: flex-start; margin-bottom: 0.85rem; width: 100%;">
-                <div class="chat-bubble-ai">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <div style="
-                            width: 22px;
-                            height: 22px;
-                            border-radius: 6px;
-                            background: linear-gradient(135deg, #10B981 0%, #22D3EE 100%);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 0.8rem;
-                        ">🌬️</div>
-                        <span style="font-size: 0.78rem; color: #10B981; font-weight: 700; letter-spacing: 0.04em;">AERIS AI</span>
-                    </div>
-                    <div>{content}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            with st.chat_message("assistant", avatar="🌬️"):
+                st.markdown(content)
 
     # Check for prompt trigger
     incoming_prompt = None
