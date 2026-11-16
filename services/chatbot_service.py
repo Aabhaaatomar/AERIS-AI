@@ -12,6 +12,7 @@ from typing import List, Dict, Any, Optional
 
 import config
 from services.llm_client import LLMClient
+from services.live_aqi_service import LiveAQIService
 from services.historical_data_service import HistoricalDataService
 from services.prediction_service import PredictionService
 from services.recommendation_service import RecommendationService
@@ -53,6 +54,7 @@ class ChatbotService:
         self.model = model or os.getenv("LLM_MODEL", "gemini-1.5-flash")
         
         # Sub-services
+        self.live_service = LiveAQIService()
         self.historical_service = HistoricalDataService()
         self.prediction_service = PredictionService()
         self.recommendation_service = RecommendationService()
@@ -76,6 +78,18 @@ class ChatbotService:
         # 1. City recognition & telemetry / historical stats
         detected_cities = [c for c in config.INDIAN_CITIES if c.lower() in q]
         for city in detected_cities:
+            # Check current atmospheric telemetry
+            live_data = self.live_service.get_city_aqi(city)
+            if live_data:
+                context_parts.append(
+                    f"[CURRENT TELEMETRY FOR {city.upper()}]: "
+                    f"AQI: {live_data['aqi']} ({live_data['dominant_pollutant']} dominant). "
+                    f"PM2.5: {live_data['pollutants'].get('PM2.5', {}).get('value')} µg/m³, "
+                    f"PM10: {live_data['pollutants'].get('PM10', {}).get('value')} µg/m³, "
+                    f"NO2: {live_data['pollutants'].get('NO2', {}).get('value')} µg/m³, "
+                    f"Status: {live_data['status']}, Timestamp: {live_data['timestamp']}."
+                )
+
             # Check historical records
             hist_stats = self.historical_service.get_city_metrics(city)
             if hist_stats and hist_stats.get("record_count", 0) > 0:
