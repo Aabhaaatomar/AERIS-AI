@@ -141,107 +141,59 @@ def render_prediction_view():
     est_val = pred_result["estimated_aqi"]
 
     with col_results:
-        st.markdown("""
-        <div style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.75rem;">
-            📊 ML Estimation Output
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("### 📊 ML Estimation Output")
 
-        st.markdown(f"""
-        <div style="
-            background: #192630;
-            border: 2px solid {category['color']}66;
-            border-radius: 14px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            margin-bottom: 1.25rem;
-        ">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                <span style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
-                    Estimated Output
-                </span>
-                <span style="
-                    background: {category['badge_bg']};
-                    color: {category['color']};
-                    border: 1px solid {category['color']};
-                    padding: 0.25rem 0.75rem;
-                    border-radius: 20px;
-                    font-size: 0.8rem;
-                    font-weight: 700;
-                ">
-                    {category['icon']} {category['label']}
-                </span>
-            </div>
-            
-            <div style="display: flex; align-items: baseline; gap: 0.75rem;">
-                <span style="
-                    font-size: 3.5rem;
-                    font-weight: 800;
-                    color: {category['color']};
-                    line-height: 1;
-                ">
-                    {int(est_val)}
-                </span>
-                <div>
-                    <span style="font-size: 1.1rem; color: #94A3B8; font-weight: 600;">AQI Estimate</span>
-                    <div style="font-size: 0.75rem; color: #10B981;">Latency: {pred_result['latency_ms']} ms</div>
-                </div>
-            </div>
-            
-            <div style="
-                margin-top: 1rem;
-                padding-top: 0.85rem;
-                border-top: 1px solid #293946;
-                font-size: 0.85rem;
-                color: #F8FAFC;
-                line-height: 1.5;
-            ">
-                <strong>Model:</strong> {pred_result['model_name']}<br>
-                <span style="color: #94A3B8;">{category['description']}</span>
-            </div>
-            
-            <div style="
-                margin-top: 0.85rem;
-                font-size: 0.72rem;
-                color: #22D3EE;
-                font-weight: 600;
-            ">
-                * Note: Statistically inferred using multi-variate regression.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Native Streamlit container for Prediction Result Card
+        with st.container(border=True):
+            # Top row: Model label & colored category badge
+            hdr_left, hdr_right = st.columns([0.55, 0.45])
+            with hdr_left:
+                st.caption("ESTIMATED OUTPUT")
+                st.markdown(f"**Model:** `{pred_result['model_name']}`")
+            with hdr_right:
+                # Use st.html for the colored category badge (no markdown code fence parsing risk)
+                st.html(
+                    f"<div style='text-align: right; margin-top: 4px;'>"
+                    f"<span style='background-color: {category['badge_bg']}; color: {category['color']}; "
+                    f"border: 1px solid {category['color']}; padding: 4px 12px; border-radius: 16px; "
+                    f"font-weight: 700; font-size: 0.85rem; display: inline-block;'>"
+                    f"{category['icon']} {category['label']}</span></div>"
+                )
 
-        # Active Model Performance Scorecard
+            # Middle row: Large AQI metric and Latency
+            met_left, met_right = st.columns([0.65, 0.35])
+            with met_left:
+                st.metric(
+                    label="Estimated AQI (CPCB)",
+                    value=int(est_val),
+                    delta=f"{category['label']}",
+                    delta_color="normal" if est_val <= 100 else "inverse"
+                )
+            with met_right:
+                st.caption("INFERENCE LATENCY")
+                st.markdown(f"<span style='color: #10B981; font-weight: 700; font-size: 1.1rem;'>{pred_result['latency_ms']} ms</span>", unsafe_allow_html=True)
+                st.caption("⚡ Fast Inference")
+
+            st.divider()
+
+            # Interpretation & health impact
+            st.markdown(f"**Interpretation:** {category['description']}")
+            st.caption("ℹ️ Statistically inferred using multi-variate regression trained on 7,300+ CPCB daily records.")
+
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+        # Active Model Performance Scorecard using Native Streamlit Metrics
         model_metrics = pred_result["metrics"]
-        st.markdown(f"""
-        <div style="
-            background: #141E27;
-            border: 1px solid #293946;
-            border-radius: 12px;
-            padding: 1.25rem;
-        ">
-            <div style="font-size: 0.82rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                📈 Verified Test Benchmark ({pred_result['model_name']})
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; text-align: center;">
-                <div style="background: #192630; border: 1px solid #293946; border-radius: 8px; padding: 0.6rem 0.4rem;">
-                    <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 600;">R² SCORE</div>
-                    <div style="font-size: 1.2rem; font-weight: 800; color: #10B981; margin-top: 0.2rem;">{model_metrics.get('R2', '--')}</div>
-                </div>
-                <div style="background: #192630; border: 1px solid #293946; border-radius: 8px; padding: 0.6rem 0.4rem;">
-                    <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 600;">MAE</div>
-                    <div style="font-size: 1.2rem; font-weight: 800; color: #22D3EE; margin-top: 0.2rem;">{model_metrics.get('MAE', '--')}</div>
-                </div>
-                <div style="background: #192630; border: 1px solid #293946; border-radius: 8px; padding: 0.6rem 0.4rem;">
-                    <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 600;">RMSE</div>
-                    <div style="font-size: 1.2rem; font-weight: 800; color: #F8FAFC; margin-top: 0.2rem;">{model_metrics.get('RMSE', '--')}</div>
-                </div>
-            </div>
-            <div style="font-size: 0.72rem; color: #64748B; margin-top: 0.75rem;">
-                Evaluated on 1,462 independent test holdout samples (80/20 CPCB split).
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown(f"**📈 Verified Test Benchmark ({pred_result['model_name']})**")
+            sc1, sc2, sc3 = st.columns(3)
+            with sc1:
+                st.metric("R² Score", f"{model_metrics.get('R2', '--')}")
+            with sc2:
+                st.metric("MAE", f"{model_metrics.get('MAE', '--')}")
+            with sc3:
+                st.metric("RMSE", f"{model_metrics.get('RMSE', '--')}")
+            st.caption("Evaluated on 1,462 independent test holdout samples (80/20 CPCB split).")
 
     st.markdown("<hr style='border: 0; border-top: 1px solid #293946; margin: 1.5rem 0;'>", unsafe_allow_html=True)
 
