@@ -177,35 +177,53 @@ def render_sidebar():
             st.markdown("""
             <div style="
                 display: grid;
-                grid-template-columns: 16px 72px 1fr;
+                grid-template-columns: 18px 74px 1fr;
                 align-items: center;
-                row-gap: 8px;
-                column-gap: 6px;
-                padding: 0.25rem 0;
+                row-gap: 10px;
+                column-gap: 8px;
+                padding: 0.35rem 0;
             ">
-                <span style="color: #10B981; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">0 – 50</span>
-                <span style="color: #10B981; font-weight: 700; font-size: 0.8rem;">Good</span>
+                <span style="color: #10B981; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">0 – 50</span>
+                <div>
+                    <div style="color: #10B981; font-weight: 700; font-size: 0.82rem;">Good</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Minimal health impact</div>
+                </div>
                 
-                <span style="color: #84CC16; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">51 – 100</span>
-                <span style="color: #84CC16; font-weight: 700; font-size: 0.8rem;">Satisfactory</span>
+                <span style="color: #84CC16; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">51 – 100</span>
+                <div>
+                    <div style="color: #84CC16; font-weight: 700; font-size: 0.82rem;">Satisfactory</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Minor breathing discomfort</div>
+                </div>
 
-                <span style="color: #EAB308; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">101 – 200</span>
-                <span style="color: #EAB308; font-weight: 700; font-size: 0.8rem;">Moderate</span>
+                <span style="color: #EAB308; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">101 – 200</span>
+                <div>
+                    <div style="color: #EAB308; font-weight: 700; font-size: 0.82rem;">Moderate</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Discomfort to asthma/heart</div>
+                </div>
 
-                <span style="color: #F97316; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">201 – 300</span>
-                <span style="color: #F97316; font-weight: 700; font-size: 0.8rem;">Poor</span>
+                <span style="color: #F97316; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">201 – 300</span>
+                <div>
+                    <div style="color: #F97316; font-weight: 700; font-size: 0.82rem;">Poor</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Discomfort to most people</div>
+                </div>
 
-                <span style="color: #EF4444; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">301 – 400</span>
-                <span style="color: #EF4444; font-weight: 700; font-size: 0.8rem;">Very Poor</span>
+                <span style="color: #EF4444; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">301 – 400</span>
+                <div>
+                    <div style="color: #EF4444; font-weight: 700; font-size: 0.82rem;">Very Poor</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Respiratory illness on exposure</div>
+                </div>
 
-                <span style="color: #991B1B; font-size: 0.95rem;">●</span>
-                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; font-weight: 600;">401 – 500</span>
-                <span style="color: #991B1B; font-weight: 700; font-size: 0.8rem;">Severe</span>
+                <span style="color: #991B1B; font-size: 1rem; line-height: 1;">●</span>
+                <span style="color: #F8FAFC; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600;">401 – 500</span>
+                <div>
+                    <div style="color: #991B1B; font-weight: 700; font-size: 0.82rem;">Severe</div>
+                    <div style="color: #94A3B8; font-size: 0.68rem;">Affects healthy people seriously</div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
 

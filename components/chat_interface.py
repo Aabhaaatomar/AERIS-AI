@@ -164,27 +164,42 @@ def render_chat_interface():
     is_demo = st.session_state.get("demo_mode", False) or not bool(api_key)
     
     # Header area with clear conversation button
-    col_hdr, col_btn = st.columns([0.82, 0.18])
-    with col_hdr:
-        st.markdown(f"""
-        <div style="margin-bottom: 0.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1.5rem;">💬</span>
-                <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800; color: #F8FAFC;">
-                    AERIS AI Conversational Assistant
-                </h2>
+    if len(st.session_state.messages) > 0:
+        col_hdr, col_btn = st.columns([0.80, 0.20])
+        with col_hdr:
+            st.markdown("""
+            <div style="margin-bottom: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.5rem;">💬</span>
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #F8FAFC;">
+                        AERIS AI Conversational Assistant
+                    </h2>
+                </div>
+                <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: #94A3B8;">
+                    Real-time reasoning, multi-service atmospheric queries, and health recommendations.
+                </p>
             </div>
-            <p style="margin: 0.2rem 0 0 0; font-size: 0.88rem; color: #94A3B8;">
-                Real-time reasoning, multi-service environmental queries, and health recommendations.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_btn:
-        if len(st.session_state.messages) > 0:
+            """, unsafe_allow_html=True)
+        with col_btn:
+            st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
             if st.button("🗑️ Clear Chat", use_container_width=True, type="secondary"):
                 st.session_state.messages = []
                 st.session_state.quick_prompt = None
                 st.rerun()
+    else:
+        st.markdown("""
+        <div style="margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.5rem;">💬</span>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #F8FAFC;">
+                    AERIS AI Conversational Assistant
+                </h2>
+            </div>
+            <p style="margin: 0.2rem 0 0 0; font-size: 0.85rem; color: #94A3B8;">
+                Real-time reasoning, multi-service atmospheric queries, and health recommendations.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Informative Banner for Current Engine Status
     if is_demo and len(st.session_state.messages) == 0:
