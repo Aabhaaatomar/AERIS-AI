@@ -125,12 +125,12 @@ def render_about_view():
             </h4>
             <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.8rem; margin-top: 0.75rem;">
                 <div style="color: #10B981; font-weight: 600;">✅ Phase 1: UI & Foundation</div>
-                <div style="color: #94A3B8;">⏳ Phase 2: AI Chatbot Integration</div>
-                <div style="color: #94A3B8;">⏳ Phase 3: Live AQI Telemetry</div>
-                <div style="color: #94A3B8;">⏳ Phase 4: Historical Dataset Analytics</div>
-                <div style="color: #94A3B8;">⏳ Phase 5: Machine Learning Models</div>
-                <div style="color: #94A3B8;">⏳ Phase 6: Service Orchestration</div>
-                <div style="color: #94A3B8;">⏳ Phase 7: Deployment & QA</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 2: AI Chatbot Integration</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 3: Live AQI Telemetry</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 4: Historical Dataset Analytics</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 5: Machine Learning Models</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 6: Service Orchestration</div>
+                <div style="color: #10B981; font-weight: 600;">✅ Phase 7: Deployment & QA Verified</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
