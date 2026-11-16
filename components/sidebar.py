@@ -132,7 +132,7 @@ def render_sidebar():
             if st.session_state.llm_provider == "gemini":
                 model_choice = st.selectbox(
                     "Model",
-                    options=["gemini-1.5-flash (Fast & Recommended)", "gemini-1.5-pro (High Reasoning)", "gemini-2.0-flash-exp"],
+                    options=["gemini-2.0-flash (Fast & Recommended)", "gemini-1.5-flash (Standard)", "gemini-1.5-pro (High Reasoning)"],
                     index=0
                 )
                 st.session_state.llm_model = model_choice.split(" ")[0]
