@@ -348,8 +348,11 @@ div[data-testid="stExpander"] details[open] summary {
 }
 
 div[data-testid="stExpanderDetails"] {
-    padding: 0.9rem !important;
+    padding: 0.75rem 0.85rem !important;
     background-color: var(--bg-card) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
 }
 
 /* =============================================================================
@@ -407,6 +410,55 @@ div[data-testid="stExpanderDetails"] {
 }
 
 /* User Message Bubble */
+/* Native Streamlit Chat Message Enhancements */
+div[data-testid="stChatMessage"] {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 14px !important;
+    padding: 0.85rem 1.15rem !important;
+    margin-bottom: 0.85rem !important;
+    box-shadow: var(--shadow-sm) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+    background: linear-gradient(135deg, rgba(20, 40, 52, 0.7) 0%, rgba(23, 50, 63, 0.7) 100%) !important;
+    border-color: #234E59 !important;
+}
+
+div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    color: var(--text-primary) !important;
+}
+
+div[data-testid="stChatMessage"] table {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    border-collapse: collapse !important;
+    margin: 0.75rem 0 !important;
+    font-size: 0.85rem !important;
+}
+
+div[data-testid="stChatMessage"] th, div[data-testid="stChatMessage"] td {
+    border: 1px solid var(--border-color) !important;
+    padding: 0.5rem 0.75rem !important;
+    text-align: left !important;
+}
+
+div[data-testid="stChatMessage"] th {
+    background-color: var(--bg-secondary) !important;
+    color: var(--accent-secondary) !important;
+    font-weight: 700 !important;
+}
+
+div[data-testid="stChatMessage"] pre, div[data-testid="stChatMessage"] code {
+    background-color: #0E151B !important;
+    border-radius: 6px !important;
+}
+
 .chat-bubble-user {
     background: linear-gradient(135deg, #142834 0%, #17323F 100%);
     border: 1px solid #234E59;
