@@ -178,3 +178,66 @@ def create_city_comparison_bar(cities: list, aqi_vals: list, title: str = "Compa
         yaxis=dict(range=[0, max(aqi_vals) * 1.2])
     )
     return fig
+
+def create_multi_parameter_trend(df: pd.DataFrame, parameters: list, title: str = "Multi-Parameter Time Series"):
+    """Interactive line chart comparing multiple pollutants across dates."""
+    fig = go.Figure()
+    palette = ["#10B981", "#22D3EE", "#F59E0B", "#EF4444", "#A855F7", "#EC4899"]
+    
+    for idx, p in enumerate(parameters):
+        if p in df.columns:
+            color = palette[idx % len(palette)]
+            fig.add_trace(go.Scatter(
+                x=df["Date"],
+                y=df[p],
+                mode='lines',
+                name=p,
+                line=dict(color=color, width=2.0)
+            ))
+
+    apply_dark_theme(fig, title)
+    fig.update_layout(
+        height=400,
+        hovermode="x unified",
+        xaxis_title="Timeline",
+        yaxis_title="Concentration / Index"
+    )
+    return fig
+
+def create_correlation_bar_chart(corr_df: pd.DataFrame, title: str = "Pollutant Correlation with AQI"):
+    """Horizontal bar chart displaying Pearson correlation with AQI."""
+    fig = go.Figure(go.Bar(
+        y=corr_df["Pollutant"],
+        x=corr_df["Correlation_With_AQI"],
+        orientation='h',
+        marker=dict(
+            color=corr_df["Correlation_With_AQI"],
+            colorscale=[[0, "#22D3EE"], [1, "#10B981"]],
+            line=dict(color='#293946', width=1)
+        ),
+        text=[f"{v:.3f}" for v in corr_df["Correlation_With_AQI"]],
+        textposition='outside',
+        textfont=dict(color="#F8FAFC", size=11)
+    ))
+    apply_dark_theme(fig, title)
+    fig.update_layout(
+        height=280,
+        xaxis=dict(range=[0, 1.15], title="Pearson Correlation (r)")
+    )
+    return fig
+
+def create_yearly_comparison_chart(yearly_dict: dict, city: str):
+    """Bar chart comparing 2023 vs 2024 annual metrics."""
+    years = [str(y) for y in [2023, 2024] if y in yearly_dict]
+    avg_aqi = [yearly_dict[int(y)]["avg_aqi"] for y in years]
+    clean_days = [yearly_dict[int(y)]["clean_days"] for y in years]
+    severe_days = [yearly_dict[int(y)]["severe_days"] for y in years]
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(name='Mean AQI', x=years, y=avg_aqi, marker_color='#22D3EE'))
+    fig.add_trace(go.Bar(name='Clean Days (AQI ≤ 100)', x=years, y=clean_days, marker_color='#10B981'))
+    fig.add_trace(go.Bar(name='Severe Days (AQI ≥ 401)', x=years, y=severe_days, marker_color='#EF4444'))
+
+    apply_dark_theme(fig, f"{city}: 2023 vs 2024 Annual Benchmarking")
+    fig.update_layout(barmode='group', height=320)
+    return fig

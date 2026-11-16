@@ -188,7 +188,7 @@ def render_sidebar():
                     padding: 0.1rem 0.4rem;
                     border-radius: 4px;
                     font-weight: 700;
-                ">PHASE 2</span>
+                ">v1.0 ONLINE</span>
             </div>
             <div style="font-size: 0.78rem; color: #F8FAFC; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                 <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{status_color};"></span>
