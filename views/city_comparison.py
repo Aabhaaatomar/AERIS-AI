@@ -1,9 +1,11 @@
 """
 AERIS AI - City Comparison View
 Side-by-side comparative benchmarking of air quality metrics and health advisories.
+Built using native Streamlit containers and components.
 """
 import streamlit as st
 import pandas as pd
+import textwrap
 import config
 from services.live_aqi_service import LiveAQIService
 from services.recommendation_service import RecommendationService
@@ -42,79 +44,61 @@ def render_city_comparison_view():
 
     st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
-    # Side-by-side comparative cards
+    # Side-by-side comparative cards using native Streamlit containers
     card_col1, card_col2 = st.columns(2)
     
     with card_col1:
-        st.markdown(f"""
-        <div style="
-            background: #192630;
-            border: 2px solid {cat_a['color']}66;
-            border-radius: 12px;
-            padding: 1.25rem;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-        ">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; font-size: 1.35rem; color: #F8FAFC;">{city_a}</h3>
-                <span style="
-                    background: {cat_a['badge_bg']};
-                    color: {cat_a['color']};
-                    border: 1px solid {cat_a['color']};
-                    padding: 0.2rem 0.6rem;
-                    border-radius: 20px;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                ">{cat_a['icon']} {cat_a['label']}</span>
-            </div>
-            <div style="font-size: 2.75rem; font-weight: 800; color: {cat_a['color']}; margin-top: 0.5rem; line-height: 1;">
-                {data_a['aqi']} <span style="font-size: 0.9rem; color: #94A3B8; font-weight: 500;">AQI</span>
-            </div>
-            <div style="margin-top: 0.75rem; font-size: 0.8rem; color: #94A3B8;">
-                <strong>Dominant Pollutant:</strong> {data_a['dominant_pollutant']}<br>
-                {cat_a['description']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            hdr_left, hdr_right = st.columns([0.62, 0.38])
+            with hdr_left:
+                st.caption("PRIMARY STATION")
+                st.markdown(f"### {city_a}")
+            with hdr_right:
+                st.html(
+                    f"<div style='text-align: right; margin-top: 6px;'>"
+                    f"<span style='background-color: {cat_a['badge_bg']}; color: {cat_a['color']}; "
+                    f"border: 1px solid {cat_a['color']}; padding: 4px 10px; border-radius: 16px; "
+                    f"font-weight: 700; font-size: 0.82rem; display: inline-block;'>"
+                    f"{cat_a['icon']} {cat_a['label']}</span></div>"
+                )
+            
+            st.metric(
+                label="Air Quality Index",
+                value=f"{data_a['aqi']} AQI",
+                delta=cat_a['label'],
+                delta_color="normal" if data_a['aqi'] <= 100 else "inverse"
+            )
+            st.markdown(f"**Dominant Factor:** `{data_a['dominant_pollutant']}`")
+            st.caption(cat_a['description'])
 
     with card_col2:
-        st.markdown(f"""
-        <div style="
-            background: #192630;
-            border: 2px solid {cat_b['color']}66;
-            border-radius: 12px;
-            padding: 1.25rem;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-        ">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; font-size: 1.35rem; color: #F8FAFC;">{city_b}</h3>
-                <span style="
-                    background: {cat_b['badge_bg']};
-                    color: {cat_b['color']};
-                    border: 1px solid {cat_b['color']};
-                    padding: 0.2rem 0.6rem;
-                    border-radius: 20px;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                ">{cat_b['icon']} {cat_b['label']}</span>
-            </div>
-            <div style="font-size: 2.75rem; font-weight: 800; color: {cat_b['color']}; margin-top: 0.5rem; line-height: 1;">
-                {data_b['aqi']} <span style="font-size: 0.9rem; color: #94A3B8; font-weight: 500;">AQI</span>
-            </div>
-            <div style="margin-top: 0.75rem; font-size: 0.8rem; color: #94A3B8;">
-                <strong>Dominant Pollutant:</strong> {data_b['dominant_pollutant']}<br>
-                {cat_b['description']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            hdr_left, hdr_right = st.columns([0.62, 0.38])
+            with hdr_left:
+                st.caption("BENCHMARK STATION")
+                st.markdown(f"### {city_b}")
+            with hdr_right:
+                st.html(
+                    f"<div style='text-align: right; margin-top: 6px;'>"
+                    f"<span style='background-color: {cat_b['badge_bg']}; color: {cat_b['color']}; "
+                    f"border: 1px solid {cat_b['color']}; padding: 4px 10px; border-radius: 16px; "
+                    f"font-weight: 700; font-size: 0.82rem; display: inline-block;'>"
+                    f"{cat_b['icon']} {cat_b['label']}</span></div>"
+                )
+            
+            st.metric(
+                label="Air Quality Index",
+                value=f"{data_b['aqi']} AQI",
+                delta=cat_b['label'],
+                delta_color="normal" if data_b['aqi'] <= 100 else "inverse"
+            )
+            st.markdown(f"**Dominant Factor:** `{data_b['dominant_pollutant']}`")
+            st.caption(cat_b['description'])
 
-    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
     # Multi-City Benchmark Bar Chart across Top Indian Metros
-    st.markdown("""
-    <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-        📊 Major Indian Metropolitan Index Benchmark
-    </div>
-    """, unsafe_allow_html=True)
+    st.subheader("📊 Major Indian Metropolitan Index Benchmark")
 
     bench_cities = config.INDIAN_CITIES[:8]
     bench_vals = [live_service.get_city_aqi(c)["aqi"] for c in bench_cities]
@@ -122,11 +106,7 @@ def render_city_comparison_view():
     st.plotly_chart(fig_comp, use_container_width=True)
 
     # Detailed Head-to-Head Pollutant Table
-    st.markdown(f"""
-    <div style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.6rem;">
-        🔬 Head-to-Head Pollutant Concentrations
-    </div>
-    """, unsafe_allow_html=True)
+    st.subheader("🔬 Head-to-Head Pollutant Concentrations")
 
     p_a = data_a["pollutants"]
     p_b = data_b["pollutants"]

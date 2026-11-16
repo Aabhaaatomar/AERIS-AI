@@ -1,9 +1,11 @@
 """
 AERIS AI - Live AQI View
 Real-time environmental monitoring dashboard across Indian urban centers.
+Built using native Streamlit containers and robust components.
 """
 import streamlit as st
 import datetime
+import textwrap
 import config
 from services.live_aqi_service import LiveAQIService
 from services.recommendation_service import RecommendationService
@@ -52,9 +54,9 @@ def render_live_aqi_view():
     city_info = live_service.get_city_aqi(target_city, force_refresh=refresh_clicked)
     aqi_val = city_info["aqi"]
 
-    # Connection & Telemetry Status Notice
+    # Connection & Telemetry Status Notice using st.html
     if city_info["is_live"]:
-        st.markdown(f"""
+        status_banner_html = textwrap.dedent(f"""
         <div style="
             background: rgba(16, 185, 129, 0.08);
             border: 1px solid rgba(16, 185, 129, 0.3);
@@ -76,9 +78,10 @@ def render_live_aqi_view():
                 Last Sync: <strong style="color: #F8FAFC;">{city_info['timestamp']}</strong>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(status_banner_html)
     else:
-        st.markdown(f"""
+        status_banner_html = textwrap.dedent(f"""
         <div style="
             background: rgba(34, 211, 238, 0.08);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -100,7 +103,8 @@ def render_live_aqi_view():
                 Station Time: <strong style="color: #F8FAFC;">{city_info['timestamp']}</strong>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """).strip()
+        st.html(status_banner_html)
 
     # Primary Environmental Metrics Row
     m1, m2, m3, m4 = st.columns(4)
@@ -113,49 +117,29 @@ def render_live_aqi_view():
     with m4:
         render_metric_card("Wind Velocity", city_info["wind"], subtitle="Dispersion capability")
 
-    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
     # Hero AQI Badge & Dark Gauge Section
     col_aqi, col_gauge = st.columns([0.58, 0.42])
     with col_aqi:
         render_aqi_badge(aqi_val, city_name=city_info["city"])
         
-        # Responsible Health Advisory Card
+        # Responsible Health Advisory Card using native container
         health_tips = RecommendationService.get_recommendations(aqi_val)
-        st.markdown(f"""
-        <div style="
-            background: #141E27;
-            border: 1px solid #293946;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-        ">
-            <div style="font-size: 0.8rem; font-weight: 700; color: #F8FAFC; text-transform: uppercase; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span>🛡️</span> CPCB Health Recommendation for {city_info['city']}
-            </div>
-            <div style="font-size: 0.85rem; color: #F8FAFC; margin-bottom: 0.35rem;">
-                <strong>Outdoor Activity:</strong> {health_tips['outdoor_activity']}
-            </div>
-            <div style="font-size: 0.85rem; color: #F8FAFC; margin-bottom: 0.35rem;">
-                <strong>Respirator / Mask:</strong> {health_tips['mask_guidance']}
-            </div>
-            <p style="margin: 0.4rem 0 0 0; font-size: 0.72rem; color: #64748B;">
-                <em>{health_tips['disclaimer']}</em>
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.caption(f"🛡️ CPCB HEALTH RECOMMENDATION FOR {city_info['city'].upper()}")
+            st.markdown(f"**Outdoor Activity:** {health_tips['outdoor_activity']}")
+            st.markdown(f"**Respirator / Mask:** {health_tips['mask_guidance']}")
+            st.caption(f"*{health_tips['disclaimer']}*")
         
     with col_gauge:
         fig_gauge = create_aqi_gauge(aqi_val, f"{city_info['city']} AQI Level")
         st.plotly_chart(fig_gauge, use_container_width=True, config={'displayModeBar': False})
 
-    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
     # Measured Pollutants Breakdown
-    st.markdown(f"""
-    <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.75rem;">
-        🔬 Measured Atmospheric Pollutants ({city_info['city']})
-    </div>
-    """, unsafe_allow_html=True)
+    st.subheader(f"🔬 Measured Atmospheric Pollutants ({city_info['city']})")
 
     pollutant_keys = list(city_info["pollutants"].keys())
     col_p1, col_p2 = st.columns([0.5, 0.5])
@@ -181,6 +165,6 @@ def render_live_aqi_view():
             )
 
     # Pollutant comparison against CPCB limits
-    st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
     comp_fig = create_pollutant_comparison_chart(city_info["pollutants"], f"{city_info['city']} Pollutant Concentrations vs CPCB Standards")
     st.plotly_chart(comp_fig, use_container_width=True, config={'displayModeBar': False})

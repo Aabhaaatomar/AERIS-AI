@@ -2,11 +2,13 @@
 AERIS AI - Historical Analysis View
 Longitudinal CPCB dataset analytics (2023-2024), seasonal patterns,
 pollutant correlations, and metropolitan rankings.
+Fully native Streamlit components for 100% bug-free metric card rendering.
 """
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import textwrap
 import config
 from services.historical_data_service import HistoricalDataService
 from components.metric_cards import render_hero_banner, render_metric_card
@@ -34,8 +36,8 @@ def render_historical_analysis_view():
         badge_color="#10B981"
     )
 
-    # Historical distinction notice
-    st.markdown("""
+    # Historical distinction notice using st.html
+    notice_html = textwrap.dedent("""
     <div style="
         background: rgba(16, 185, 129, 0.08);
         border: 1px solid rgba(16, 185, 129, 0.3);
@@ -52,7 +54,8 @@ def render_historical_analysis_view():
             These records represent validated daily telemetry from <strong>January 1, 2023 through December 31, 2024</strong> (7,310 verified station records). Historical observations are distinct from real-time live feeds.
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """).strip()
+    st.html(notice_html)
 
     if not val_report.get("valid", False):
         st.error(f"Dataset verification error: {val_report.get('error', 'Unknown error')}")
@@ -83,7 +86,7 @@ def render_historical_analysis_view():
         year_filter = None if "All" in selected_year else int(selected_year)
         metrics = hist_service.get_city_metrics(selected_city, year=year_filter)
 
-        # Primary KPI Cards
+        # Primary KPI Cards (Native Streamlit Containers via render_metric_card)
         k1, k2, k3, k4 = st.columns(4)
         with k1:
             render_metric_card("Average Recorded", f"{metrics['avg_aqi']:.1f}", unit="AQI", subtitle=f"Mean AQI ({selected_year})")
@@ -92,9 +95,9 @@ def render_historical_analysis_view():
         with k3:
             render_metric_card("Clean Days (AQI ≤ 100)", f"{metrics['clean_days_pct']:.1f}%", subtitle="Satisfactory or Good air")
         with k4:
-            render_metric_card("Primary Driver", metrics["primary_driver"], subtitle="Most frequent dominant pollutant")
+            render_metric_card("Primary Driver", str(metrics["primary_driver"]), subtitle="Most frequent dominant pollutant")
 
-        st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
         # Time Series Chart
         df = hist_service.load_data()
@@ -102,11 +105,7 @@ def render_historical_analysis_view():
         if year_filter:
             city_df = city_df[city_df["Year"] == year_filter]
 
-        st.markdown(f"""
-        <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-            📈 {selected_city}: {selected_param} Time Series Trajectory
-        </div>
-        """, unsafe_allow_html=True)
+        st.subheader(f"📈 {selected_city}: {selected_param} Time Series Trajectory")
 
         trend_fig = create_trend_line_chart(
             city_df, "Date", selected_param,
@@ -128,11 +127,7 @@ def render_historical_analysis_view():
         # Monthly Seasonality Pattern & Category Breakdown
         col_month, col_pie = st.columns([0.55, 0.45])
         with col_month:
-            st.markdown("""
-            <div style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-                📅 Monthly Seasonality Pattern
-            </div>
-            """, unsafe_allow_html=True)
+            st.subheader("📅 Monthly Seasonality Pattern")
             monthly_data = hist_service.get_monthly_aggregates(selected_city, selected_param, year=year_filter)
             fig_bar = px.bar(
                 monthly_data,
@@ -146,11 +141,7 @@ def render_historical_analysis_view():
             st.plotly_chart(fig_bar, use_container_width=True)
 
         with col_pie:
-            st.markdown("""
-            <div style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-                🏷️ CPCB AQI Bucket Distribution
-            </div>
-            """, unsafe_allow_html=True)
+            st.subheader("🏷️ CPCB AQI Bucket Distribution")
             bucket_counts = city_df["AQI_Bucket"].value_counts().reset_index()
             bucket_counts.columns = ["Category", "Days"]
             color_map = {
@@ -169,14 +160,8 @@ def render_historical_analysis_view():
     # TAB 2: NATIONAL RANKINGS
     # -------------------------------------------------------------------------
     with tab2:
-        st.markdown("""
-        <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-            🏆 Indian Metropolitan Air Quality League Table
-        </div>
-        <p style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 1rem;">
-            Ranked from cleanest to most polluted based on empirical CPCB monitoring records.
-        </p>
-        """, unsafe_allow_html=True)
+        st.subheader("🏆 Indian Metropolitan Air Quality League Table")
+        st.caption("Ranked from cleanest to most polluted based on empirical CPCB monitoring records.")
 
         rank_year = st.radio("Ranking Period", ["Overall (2023 - 2024)", "2023 Only", "2024 Only"], horizontal=True)
         yr_val = None if "Overall" in rank_year else int(rank_year.split(" ")[0])
@@ -207,53 +192,31 @@ def render_historical_analysis_view():
     # TAB 3: 2023 VS 2024 BENCHMARK
     # -------------------------------------------------------------------------
     with tab3:
-        st.markdown(f"""
-        <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-            📅 Year-Over-Year Progression: 2023 vs 2024 ({selected_city})
-        </div>
-        """, unsafe_allow_html=True)
+        st.subheader(f"📅 Year-Over-Year Progression: 2023 vs 2024 ({selected_city})")
 
         yoy = hist_service.get_yearly_comparison(selected_city)
         if 2023 in yoy and 2024 in yoy:
             pct_change = yoy["yoy_pct_change"]
             delta_val = yoy["yoy_aqi_delta"]
             direction = "worsened" if delta_val > 0 else "improved"
-            delta_color = "#EF4444" if delta_val > 0 else "#10B981"
 
-            st.markdown(f"""
-            <div style="
-                background: #192630;
-                border: 1px solid #293946;
-                border-radius: 12px;
-                padding: 1.25rem;
-                margin-bottom: 1.25rem;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 1rem;
-            ">
-                <div>
-                    <div style="font-size: 0.8rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Year-Over-Year Trend</div>
-                    <div style="font-size: 1.6rem; font-weight: 800; color: {delta_color};">
-                        {"+" if delta_val > 0 else ""}{delta_val} AQI ({pct_change}%)
-                    </div>
-                    <div style="font-size: 0.85rem; color: #94A3B8;">
-                        Overall air quality {direction} in 2024 compared to 2023.
-                    </div>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <div style="background: #141E27; border: 1px solid #293946; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8;">2023 Mean AQI</div>
-                        <div style="font-size: 1.25rem; font-weight: 700; color: #22D3EE;">{yoy[2023]['avg_aqi']}</div>
-                    </div>
-                    <div style="background: #141E27; border: 1px solid #293946; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8;">2024 Mean AQI</div>
-                        <div style="font-size: 1.25rem; font-weight: 700; color: #10B981;">{yoy[2024]['avg_aqi']}</div>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            with st.container(border=True):
+                c_yoy1, c_yoy2, c_yoy3 = st.columns([0.5, 0.25, 0.25])
+                with c_yoy1:
+                    st.caption("YEAR-OVER-YEAR TREND")
+                    st.metric(
+                        label="AQI Progression",
+                        value=f"{'+' if delta_val > 0 else ''}{delta_val} AQI",
+                        delta=f"{pct_change}% ({direction})",
+                        delta_color="inverse" if delta_val > 0 else "normal"
+                    )
+                    st.caption(f"Overall air quality {direction} in 2024 compared to 2023.")
+                with c_yoy2:
+                    st.caption("2023 MEAN AQI")
+                    st.metric(label="2023", value=f"{yoy[2023]['avg_aqi']:.1f}")
+                with c_yoy3:
+                    st.caption("2024 MEAN AQI")
+                    st.metric(label="2024", value=f"{yoy[2024]['avg_aqi']:.1f}")
 
             comp_chart = create_yearly_comparison_chart(yoy, selected_city)
             st.plotly_chart(comp_chart, use_container_width=True)
@@ -262,14 +225,8 @@ def render_historical_analysis_view():
     # TAB 4: POLLUTANT CORRELATIONS
     # -------------------------------------------------------------------------
     with tab4:
-        st.markdown(f"""
-        <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-            🔬 Atmospheric Pollutant Sensitivity & Correlations ({selected_city})
-        </div>
-        <p style="font-size: 0.85rem; color: #94A3B8;">
-            Pearson correlation coefficient ($r$) quantifying each pollutant's mathematical coupling with overall AQI spikes.
-        </p>
-        """, unsafe_allow_html=True)
+        st.subheader(f"🔬 Atmospheric Pollutant Sensitivity & Correlations ({selected_city})")
+        st.caption("Pearson correlation coefficient ($r$) quantifying each pollutant's mathematical coupling with overall AQI spikes.")
 
         corr_df = hist_service.get_correlations(selected_city)
         col_c1, col_c2 = st.columns([0.55, 0.45])
@@ -277,18 +234,13 @@ def render_historical_analysis_view():
             fig_corr = create_correlation_bar_chart(corr_df, f"{selected_city}: Correlation with AQI")
             st.plotly_chart(fig_corr, use_container_width=True)
         with col_c2:
-            st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
             st.dataframe(corr_df, use_container_width=True, hide_index=True)
 
     # -------------------------------------------------------------------------
     # TAB 5: DATASET HEALTH & SCHEMA
     # -------------------------------------------------------------------------
     with tab5:
-        st.markdown("""
-        <div style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin-bottom: 0.5rem;">
-            📋 Dataset Health, Schema & Audit Report
-        </div>
-        """, unsafe_allow_html=True)
+        st.subheader("📋 Dataset Health, Schema & Audit Report")
 
         h1, h2, h3, h4 = st.columns(4)
         with h1:
@@ -300,7 +252,7 @@ def render_historical_analysis_view():
         with h4:
             render_metric_card("Date Range", f"{val_report['years_covered'][0]}-{val_report['years_covered'][-1]}", subtitle="731 days per city")
 
-        st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
 
         # Raw Data Explorer
         with st.expander("🔍 Explore Raw Historical Dataset"):
