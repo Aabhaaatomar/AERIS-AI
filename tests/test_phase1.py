@@ -59,8 +59,9 @@ def test_historical_dataset():
 def test_prediction_estimator():
     pred = PredictionService()
     est = pred.predict_aqi({"PM2.5": 120, "PM10": 200, "NO2": 50, "CO": 2.0})
-    assert 0 <= est <= 500, f"AQI estimate {est} out of bounds"
-    print(f"✓ ML estimation baseline returns valid range: {est} AQI.")
+    val = est["estimated_aqi"] if isinstance(est, dict) else est
+    assert 0 <= val <= 500, f"AQI estimate {val} out of bounds"
+    print(f"✓ ML estimation baseline returns valid range: {val} AQI.")
 
 def test_chart_generators():
     gauge = create_aqi_gauge(240, "Test Gauge")
