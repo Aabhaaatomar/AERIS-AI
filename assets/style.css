@@ -1,0 +1,313 @@
+/* =============================================================================
+   AERIS AI - PREMIUM DARK SAAS DESIGN SYSTEM
+   ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --bg-primary: #0B0F14;
+    --bg-sidebar: #101820;
+    --bg-secondary: #141E27;
+    --bg-card: #192630;
+    --bg-card-hover: #20313E;
+    --accent-primary: #10B981;
+    --accent-secondary: #22D3EE;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --border-color: #293946;
+    --border-accent: rgba(16, 185, 129, 0.3);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.6);
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base Body & App Container */
+html, body, [data-testid="stAppViewContainer"] {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans) !important;
+}
+
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* Sidebar Customization */
+section[data-testid="stSidebar"] {
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+section[data-testid="stSidebar"] .stMarkdown {
+    color: var(--text-primary) !important;
+}
+
+/* Main Container Padding */
+.main .block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1200px !important;
+}
+
+/* Premium Card Styles */
+.aeris-card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1.25rem !important;
+    margin-bottom: 1rem !important;
+    box-shadow: var(--shadow-sm) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.aeris-card:hover {
+    border-color: var(--border-accent) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.aeris-card-accent {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(34, 211, 238, 0.05) 100%), var(--bg-card) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 1.25rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Metric Display Card */
+.metric-box {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-box .metric-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.metric-box .metric-val {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.2;
+}
+
+.metric-box .metric-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+/* Status Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.badge-emerald {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--accent-primary);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-cyan {
+    background-color: rgba(34, 211, 238, 0.15);
+    color: var(--accent-secondary);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.badge-neutral {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+/* Chat Interface Styling */
+.chat-welcome-container {
+    background: linear-gradient(180deg, rgba(20, 30, 39, 0.8) 0%, rgba(25, 38, 48, 0.4) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.chat-bubble-user {
+    background-color: #172D36;
+    border: 1px solid #234E59;
+    border-radius: 16px 16px 4px 16px;
+    padding: 1rem 1.25rem;
+    color: var(--text-primary);
+    margin-left: 20%;
+    margin-bottom: 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.chat-bubble-ai {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px 16px 16px 4px;
+    padding: 1rem 1.25rem;
+    color: var(--text-primary);
+    margin-right: 15%;
+    margin-bottom: 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    box-shadow: var(--shadow-sm);
+}
+
+.demo-tag {
+    display: inline-block;
+    background: rgba(34, 211, 238, 0.15);
+    border: 1px solid rgba(34, 211, 238, 0.4);
+    color: var(--accent-secondary);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+/* Streamlit Inputs Styling */
+div[data-testid="stChatInput"] {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+}
+
+div[data-testid="stChatInput"]:focus-within {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 1px var(--accent-primary) !important;
+}
+
+div[data-testid="stChatInput"] textarea {
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans) !important;
+}
+
+/* Streamlit Button Styling */
+button[kind="secondary"], button[kind="primary"] {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+button[kind="primary"] {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+
+button[kind="primary"]:hover {
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+button[kind="secondary"] {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+button[kind="secondary"]:hover {
+    background-color: var(--bg-card-hover) !important;
+    border-color: var(--accent-secondary) !important;
+    color: var(--accent-secondary) !important;
+}
+
+/* Suggestion Pills */
+.suggestion-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 0.25rem;
+}
+
+.suggestion-pill:hover {
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
+    background: var(--bg-secondary);
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+}
+
+p, li, span, label {
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans) !important;
+}
+
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.text-accent-primary {
+    color: var(--accent-primary) !important;
+}
+
+.text-accent-secondary {
+    color: var(--accent-secondary) !important;
+}
+
+/* Streamlit Selectbox and Widgets */
+div[data-baseweb="select"] > div {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px !important;
+}
+
+div[data-baseweb="input"] > div {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
